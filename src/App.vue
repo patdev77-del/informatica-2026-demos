@@ -1,11 +1,7 @@
 <script setup>
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { units } from './router.js'
-
-const repo = 'patdev77-del/informatica-2026-demos'
-function stackblitzUrl(file) {
-  return `https://stackblitz.com/github/${repo}?file=${file}`
-}
+import DemoStage from './components/DemoStage.vue'
 </script>
 
 <template>
@@ -27,15 +23,6 @@ function stackblitzUrl(file) {
             <RouterLink :to="'/' + demo.path">
               <span class="link-dot"></span>{{ demo.title }}
             </RouterLink>
-            <a
-              :href="stackblitzUrl(demo.file)"
-              target="_blank"
-              rel="noopener"
-              class="sb-link"
-              title="Open in Stackblitz"
-            >
-              <svg viewBox="0 0 28 28" fill="currentColor" aria-hidden="true"><path d="M12.747 16.273h-7.46L18.925 1.5l-3.671 10.227h7.46L9.075 26.5z"/></svg>
-            </a>
           </li>
         </ul>
       </div>
@@ -43,7 +30,7 @@ function stackblitzUrl(file) {
 
     <!-- ── Demo stage ── -->
     <main id="demo-view">
-      <RouterView />
+      <DemoStage />
     </main>
   </div>
 </template>
@@ -142,35 +129,7 @@ function stackblitzUrl(file) {
   transition: background 0.13s, color 0.13s;
 }
 
-/* RouterLink takes remaining space; Stackblitz icon sits beside it */
-.nav-item > a:first-child {
-  flex: 1;
-}
 
-.sb-link {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  padding: 0.25rem 0.35rem;
-  border-radius: 5px;
-  color: var(--text);
-  opacity: 0;
-  transition: opacity 0.13s, color 0.13s;
-}
-
-.nav-item:hover .sb-link {
-  opacity: 1;
-}
-
-.sb-link:hover {
-  color: var(--accent) !important;
-  background: var(--accent-bg);
-}
-
-.sb-link svg {
-  width: 12px;
-  height: 12px;
-}
 
 .nav-unit a:hover {
   background: var(--social-bg);
