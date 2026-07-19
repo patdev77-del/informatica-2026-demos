@@ -126,10 +126,10 @@ import DemoStage from './components/DemoStage.vue'
   font-family: var(--mono);
   color: var(--text);
   text-decoration: none;
-  transition: background 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    color 0.13s;
 }
-
-
 
 .nav-unit a:hover {
   background: var(--social-bg);
@@ -160,6 +160,4 @@ import DemoStage from './components/DemoStage.vue'
 #demo-view {
   padding: 3rem 2.5rem;
 }
-
-
 </style>

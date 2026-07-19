@@ -187,7 +187,6 @@ function stackblitzUrl(file) {
 }
 
 .preview-pane {
-  padding: 1.5rem;
   overflow: auto;
   background: var(--social-bg);
   display: flex;
