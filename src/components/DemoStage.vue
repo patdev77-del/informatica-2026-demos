@@ -1,33 +1,50 @@
 <script setup>
-import { computed, ref, onMounted, watch, nextTick } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { units } from '../router.js'
-import Prism from 'prismjs'
-// Import standard Prism languages
-import 'prismjs/components/prism-css'
-import 'prismjs/components/prism-javascript'
-// Import premium dark theme
-import 'prismjs/themes/prism-tomorrow.css'
+import { createHighlighterCore } from 'shiki/core'
+import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
+import langVue from 'shiki/langs/vue.mjs'
+import langHtml from 'shiki/langs/html.mjs'
+import langCss from 'shiki/langs/css.mjs'
+import langJs from 'shiki/langs/javascript.mjs'
+import langTs from 'shiki/langs/typescript.mjs'
+import langJson from 'shiki/langs/json.mjs'
+import themeGithubDark from 'shiki/themes/github-dark.mjs'
 
 const route = useRoute()
 
 // Flatten all demos to easily look up the current one by path
-const allDemos = computed(() => units.flatMap(u => u.demos))
-const activeDemo = computed(() => allDemos.value.find(d => '/' + d.path === route.path))
+const allDemos = computed(() => units.flatMap((u) => u.demos))
+const activeDemo = computed(() => allDemos.value.find((d) => '/' + d.path === route.path))
 
-const codeBlock = ref(null)
+const highlighter = ref(null)
+const highlightedCode = ref('')
 
 const highlight = () => {
-  nextTick(() => {
-    if (codeBlock.value) {
-      Prism.highlightElement(codeBlock.value)
-    }
-  })
+  if (highlighter.value && activeDemo.value?.source) {
+    const fullHtml = highlighter.value.codeToHtml(activeDemo.value.source, {
+      lang: 'vue',
+      theme: 'github-dark'
+    })
+    // Extract just the <pre> block from the full HTML page
+    const match = fullHtml.match(/<pre[^>]*>[\s\S]*<\/pre>/)
+    highlightedCode.value = match ? match[0] : ''
+  }
 }
+
+// Initialize Shiki highlighter with only needed languages
+onMounted(async () => {
+  highlighter.value = await createHighlighterCore({
+    themes: [themeGithubDark],
+    langs: [langVue, langHtml, langCss, langJs, langTs, langJson],
+    engine: createJavaScriptRegexEngine()
+  })
+  highlight()
+})
 
 // Highlight whenever active demo changes
 watch(activeDemo, highlight)
-onMounted(highlight)
 
 const repo = 'patdev77-del/informatica-2026-demos'
 function stackblitzUrl(file) {
@@ -43,15 +60,10 @@ function stackblitzUrl(file) {
         <span class="file-icon">📄</span>
         <code>{{ activeDemo.title }}</code>
       </div>
-      <a
-        :href="stackblitzUrl(activeDemo.file)"
-        target="_blank"
-        rel="noopener"
-        class="sb-btn"
-      >
+      <a :href="stackblitzUrl(activeDemo.file)" target="_blank" rel="noopener" class="sb-btn">
         <span>Open in StackBlitz</span>
         <svg viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
-          <path d="M12.747 16.273h-7.46L18.925 1.5l-3.671 10.227h7.46L9.075 26.5z"/>
+          <path d="M12.747 16.273h-7.46L18.925 1.5l-3.671 10.227h7.46L9.075 26.5z" />
         </svg>
       </a>
     </header>
@@ -60,8 +72,9 @@ function stackblitzUrl(file) {
     <div class="stage-body">
       <!-- Code Column -->
       <section class="pane code-pane">
-        <pre><code ref="codeBlock" class="language-html">{{ activeDemo.source }}</code></pre>
+        <pre v-html="highlightedCode" class="shiki-code" />
       </section>
+
 
       <!-- Preview Column -->
       <section class="pane preview-pane">
@@ -127,7 +140,9 @@ function stackblitzUrl(file) {
   text-decoration: none;
   font-weight: 600;
   font-size: 0.85rem;
-  transition: opacity 0.2s, transform 0.1s;
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
 }
 
 .sb-btn:hover {
@@ -162,28 +177,29 @@ function stackblitzUrl(file) {
 }
 
 .code-pane {
-  background: #2d2d2d; /* Tomorrow dark theme background */
+  background: #1e1e1e; /* github-dark theme background */
   border-color: #3d3d3d;
+  padding: 0;
 }
 
-.code-pane pre {
-  margin: 0;
-  padding: 1.2rem;
+.code-pane .shiki-code {
+  height: 100%;
+  overflow: auto;
+  white-space: pre;
+}
+
+.code-pane .shiki-code pre {
+  margin: 0 !important;
+  padding: 1.2rem !important;
   overflow: auto;
   height: 100%;
   box-sizing: border-box;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.code-pane code {
-  background: none;
-  padding: 0;
-  color: inherit;
-  font-size: inherit;
-  line-height: inherit;
+  font-size: 0.8rem !important;
+  line-height: 1.5 !important;
+  background: transparent !important;
+  white-space: pre !important;
+  word-spacing: normal;
+  word-break: normal;
 }
 
 .preview-pane {
@@ -241,8 +257,13 @@ function stackblitzUrl(file) {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 @media (max-width: 1024px) {
@@ -252,8 +273,9 @@ function stackblitzUrl(file) {
     min-height: auto;
     gap: 1rem;
   }
-  
-  .code-pane, .preview-pane {
+
+  .code-pane,
+  .preview-pane {
     height: 400px;
   }
 }

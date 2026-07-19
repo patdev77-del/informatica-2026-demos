@@ -10,7 +10,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "prismjs": "^1.30.0",
+    "shiki": "^4.3.1",
     "vue": "^3.5.30",
     "vue-router": "^5.0.4"
   },
