@@ -20,7 +20,6 @@ const dayLabels = {
     <!-- ── Sidebar ── -->
     <nav id="main-nav">
       <div class="nav-brand">
-        <span class="nav-brand-icon">⚡</span>
         <div>
           <div class="nav-brand-title">Vue 3</div>
           <div class="nav-brand-sub">{{ dayLabels[selectedDay] }}</div>
@@ -86,11 +85,6 @@ const dayLabels = {
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);
   border-radius: 10px;
-}
-
-.nav-brand-icon {
-  font-size: 1.4rem;
-  line-height: 1;
 }
 
 .nav-brand-title {
