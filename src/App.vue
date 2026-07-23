@@ -1,7 +1,18 @@
 <script setup>
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { units } from './router.js'
+import { day1Units, day2Units } from './router.js'
 import DemoStage from './components/DemoStage.vue'
+
+const selectedDay = ref('day1')
+const units = {
+  day1: day1Units,
+  day2: day2Units
+}
+const dayLabels = {
+  day1: 'Day 1 Demos',
+  day2: 'Day 2 Demos'
+}
 </script>
 
 <template>
@@ -12,11 +23,23 @@ import DemoStage from './components/DemoStage.vue'
         <span class="nav-brand-icon">⚡</span>
         <div>
           <div class="nav-brand-title">Vue 3</div>
-          <div class="nav-brand-sub">Day 1 Demos</div>
+          <div class="nav-brand-sub">{{ dayLabels[selectedDay] }}</div>
         </div>
       </div>
 
-      <div v-for="unit in units" :key="unit.title" class="nav-unit">
+      <!-- Day Switcher -->
+      <div class="day-switcher">
+        <button
+          v-for="day in ['day1', 'day2']"
+          :key="day"
+          :class="['day-btn', { active: selectedDay === day }]"
+          @click="selectedDay = day"
+        >
+          {{ dayLabels[day] }}
+        </button>
+      </div>
+
+      <div v-for="unit in units[selectedDay]" :key="unit.title" class="nav-unit">
         <span class="nav-unit-label">{{ unit.title }}</span>
         <ul>
           <li v-for="demo in unit.demos" :key="demo.path" class="nav-item">
@@ -83,6 +106,38 @@ import DemoStage from './components/DemoStage.vue'
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* Day Switcher */
+.day-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.day-btn {
+  flex: 1;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.13s;
+}
+
+.day-btn:hover {
+  background: var(--social-bg);
+  color: var(--text-h);
+}
+
+.day-btn.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
 }
 
 /* Unit groups */

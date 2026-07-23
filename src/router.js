@@ -26,10 +26,13 @@ import DemoWatch from './components/day1/unit08-onMounted-watch/demo-watch.vue'
 import DemoWatchSource from './components/day1/unit08-onMounted-watch/demo-watch.vue?raw'
 import DemoWatchEffect from './components/day1/unit08-onMounted-watch/demo-watchEffect.vue'
 import DemoWatchEffectSource from './components/day1/unit08-onMounted-watch/demo-watchEffect.vue?raw'
+import SpeakerCardParent from './components/day2/unit11-demo-props/demo-props-parent.vue'
+import SpeakerCardParentSource from './components/day2/unit11-demo-props/demo-props-parent.vue?raw'
 
 const d1 = 'src/components/day1'
+const d2 = 'src/components/day2'
 
-export const units = [
+export const day1Units = [
   {
     title: 'Unit 02 – Mental Model',
     demos: [
@@ -145,10 +148,24 @@ export const units = [
         source: DemoWatchEffectSource
       }
     ]
+}
+]
+export const day2Units = [
+  {
+    title: 'Day 2 – Unit 11 – Props Demo',
+    demos: [
+      {
+        path: 'day2-unit11-speaker-card',
+        title: 'SpeakerCardParent.vue',
+        file: `${d2}/unit11-demo-props/SpeakerCardParent.vue`,
+        component: SpeakerCardParent,
+        source: SpeakerCardParentSource
+      }
+    ]
   }
 ]
-
-const routes = units.flatMap((unit) =>
+const allUnits = [...day2Units, ...day1Units]
+const routes = allUnits.flatMap((unit) =>
   unit.demos.map((demo) => ({
     path: '/' + demo.path,
     component: demo.component

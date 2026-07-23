@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { units } from '../router.js'
+import { day1Units } from '../router.js'
 import { createHighlighterCore } from 'shiki/core'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 import langVue from 'shiki/langs/vue.mjs'
@@ -15,7 +15,7 @@ import themeGithubDark from 'shiki/themes/github-dark.mjs'
 const route = useRoute()
 
 // Flatten all demos to easily look up the current one by path
-const allDemos = computed(() => units.flatMap((u) => u.demos))
+const allDemos = computed(() => day1Units.flatMap((u) => u.demos))
 const activeDemo = computed(() => allDemos.value.find((d) => '/' + d.path === route.path))
 
 const highlighter = ref(null)
