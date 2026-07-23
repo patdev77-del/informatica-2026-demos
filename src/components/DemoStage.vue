@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { day1Units } from '../router.js'
+import { day1Units, day2Units } from '../router.js'
 import { createHighlighterCore } from 'shiki/core'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 import langVue from 'shiki/langs/vue.mjs'
@@ -15,7 +15,7 @@ import themeGithubDark from 'shiki/themes/github-dark.mjs'
 const route = useRoute()
 
 // Flatten all demos to easily look up the current one by path
-const allDemos = computed(() => day1Units.flatMap((u) => u.demos))
+const allDemos = computed(() => [...day1Units.flatMap((u) => u.demos), ...day2Units.flatMap((u) => u.demos)])
 const activeDemo = computed(() => allDemos.value.find((d) => '/' + d.path === route.path))
 
 const highlighter = ref(null)
@@ -86,7 +86,6 @@ function githubUrl(file) {
   </div>
   <div v-else class="stage-empty">
     <div class="empty-hero">
-      <span class="empty-icon">⚡</span>
       <h2>Vue 3 Demos</h2>
       <p>Select a demo from the sidebar to view source code and run live examples side-by-side.</p>
     </div>

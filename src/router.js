@@ -156,8 +156,8 @@ export const day2Units = [
     demos: [
       {
         path: 'day2-unit11-speaker-card',
-        title: 'SpeakerCardParent.vue',
-        file: `${d2}/unit11-demo-props/SpeakerCardParent.vue`,
+        title: 'demo-props-parent.vue',
+        file: `${d2}/unit11-demo-props/demo-props-parent.vue`,
         component: SpeakerCardParent,
         source: SpeakerCardParentSource
       }
