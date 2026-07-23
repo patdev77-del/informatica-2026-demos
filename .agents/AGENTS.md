@@ -43,6 +43,13 @@ src/components/day1/
   unit08-onMounted-watch/    demo-watch.vue, demo-watchEffect.vue
 ```
 
+## Demo Components (Day 2)
+
+```
+src/components/day2/
+  unit11-demo-props/         demo-props-parent.vue, SpeakerCard.vue
+```
+
 ## Dev Server
 
 ```bash
