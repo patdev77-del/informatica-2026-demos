@@ -1,27 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { useTheme } from '@/composables/useTheme'
 
-const theme = ref(null)
-function applyTheme(t) {
-  if (t) document.documentElement.setAttribute('data-theme', t)
-  else document.documentElement.removeAttribute('data-theme')
-}
-function setAndSave(t) {
-  theme.value = t
-  if (t) localStorage.setItem('theme', t)
-  else localStorage.removeItem('theme')
-  applyTheme(t)
-}
+const { theme } = useTheme()
+
 function toggle() {
-  setAndSave(theme.value === 'dark' ? 'light' : 'dark')
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
 }
-
-onMounted(() => {
-  const stored = localStorage.getItem('theme')
-  if (stored) setAndSave(stored)
-  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setAndSave('dark')
-  else setAndSave('light')
-})
 </script>
 
 <template>

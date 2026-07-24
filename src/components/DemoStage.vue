@@ -2,6 +2,7 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { day1Units, day2Units } from '../router.js'
+import { useTheme } from '@/composables/useTheme'
 import { createHighlighterCore } from 'shiki/core'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 import langVue from 'shiki/langs/vue.mjs'
@@ -11,8 +12,10 @@ import langJs from 'shiki/langs/javascript.mjs'
 import langTs from 'shiki/langs/typescript.mjs'
 import langJson from 'shiki/langs/json.mjs'
 import themeGithubDark from 'shiki/themes/github-dark.mjs'
+import themeGithubLight from 'shiki/themes/github-light.mjs'
 
 const route = useRoute()
+const { theme } = useTheme()
 
 // Flatten all demos to easily look up the current one by path
 const allDemos = computed(() => [...day1Units.flatMap((u) => u.demos), ...day2Units.flatMap((u) => u.demos)])
@@ -20,12 +23,13 @@ const activeDemo = computed(() => allDemos.value.find((d) => '/' + d.path === ro
 
 const highlighter = ref(null)
 const highlightedCode = ref('')
+const currentThemeName = computed(() => theme.value === 'dark' ? 'github-dark' : 'github-light')
 
 const highlight = () => {
   if (highlighter.value && activeDemo.value?.source) {
     const fullHtml = highlighter.value.codeToHtml(activeDemo.value.source, {
       lang: 'vue',
-      theme: 'github-dark'
+      theme: currentThemeName.value
     })
     // Extract just the <pre> block from the full HTML page
     const match = fullHtml.match(/<pre[^>]*>[\s\S]*<\/pre>/)
@@ -33,18 +37,18 @@ const highlight = () => {
   }
 }
 
-// Initialize Shiki highlighter with only needed languages
+// Initialize Shiki highlighter once with both themes
 onMounted(async () => {
   highlighter.value = await createHighlighterCore({
-    themes: [themeGithubDark],
+    themes: [themeGithubDark, themeGithubLight],
     langs: [langVue, langHtml, langCss, langJs, langTs, langJson],
     engine: createJavaScriptRegexEngine()
   })
   highlight()
 })
 
-// Highlight whenever active demo changes
-watch(activeDemo, highlight)
+// Re-highlight when theme or active demo changes
+watch([currentThemeName, activeDemo], highlight)
 
 const repo = 'patdev77-del/informatica-2026-demos'
 function githubUrl(file) {
@@ -176,8 +180,8 @@ function githubUrl(file) {
 }
 
 .code-pane {
-  background: #1e1e1e; /* github-dark theme background */
-  border-color: #3d3d3d;
+  background: var(--code-bg);
+  border-color: var(--border);
   padding: 0;
 }
 
