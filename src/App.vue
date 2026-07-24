@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { day1Units, day2Units } from './router.js'
 import DemoStage from './components/DemoStage.vue'
+import ThemeToggle from './components/ThemeToggle.vue'
 
 const selectedDay = ref('day1')
 const units = {
@@ -24,6 +25,7 @@ const dayLabels = {
           <div class="nav-brand-title">Vue 3</div>
           <div class="nav-brand-sub">{{ dayLabels[selectedDay] }}</div>
         </div>
+        <ThemeToggle />
       </div>
 
       <!-- Day Switcher -->
@@ -80,6 +82,7 @@ const dayLabels = {
 .nav-brand {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
   padding: 0.6rem 0.75rem;
   background: var(--accent-bg);
