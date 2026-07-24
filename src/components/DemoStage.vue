@@ -21,17 +21,27 @@ const { theme } = useTheme()
 const allDemos = computed(() => [...day1Units.flatMap((u) => u.demos), ...day2Units.flatMap((u) => u.demos)])
 const activeDemo = computed(() => allDemos.value.find((d) => '/' + d.path === route.path))
 
+// Check if source is an array of files or a single string
+const sourceIsArray = computed(() => Array.isArray(activeDemo.value?.source))
+const sourceFiles = computed(() => {
+  if (!activeDemo.value?.source) return []
+  if (sourceIsArray.value) return activeDemo.value.source
+  return [{ file: activeDemo.value.title, code: activeDemo.value.source }]
+})
+
+const selectedFileIndex = ref(0)
+const currentSourceFile = computed(() => sourceFiles.value[selectedFileIndex.value])
+
 const highlighter = ref(null)
 const highlightedCode = ref('')
 const currentThemeName = computed(() => theme.value === 'dark' ? 'github-dark' : 'github-light')
 
 const highlight = () => {
-  if (highlighter.value && activeDemo.value?.source) {
-    const fullHtml = highlighter.value.codeToHtml(activeDemo.value.source, {
+  if (highlighter.value && currentSourceFile.value?.code) {
+    const fullHtml = highlighter.value.codeToHtml(currentSourceFile.value.code, {
       lang: 'vue',
       theme: currentThemeName.value
     })
-    // Extract just the <pre> block from the full HTML page
     const match = fullHtml.match(/<pre[^>]*>[\s\S]*<\/pre>/)
     highlightedCode.value = match ? match[0] : ''
   }
@@ -47,8 +57,17 @@ onMounted(async () => {
   highlight()
 })
 
-// Re-highlight when theme or active demo changes
-watch([currentThemeName, activeDemo], highlight)
+// Re-highlight when theme changes
+watch(currentThemeName, highlight)
+
+// Reset file index when demo changes
+watch(activeDemo, () => {
+  selectedFileIndex.value = 0
+  highlight()
+})
+
+// Re-highlight when selected file changes
+watch(selectedFileIndex, highlight)
 
 const repo = 'patdev77-del/informatica-2026-demos'
 function githubUrl(file) {
@@ -76,9 +95,19 @@ function githubUrl(file) {
     <div class="stage-body">
       <!-- Code Column -->
       <section class="pane code-pane">
+        <!-- File tabs for multi-file demos -->
+        <div v-if="sourceIsArray && sourceFiles.length > 1" class="file-tabs">
+          <button
+            v-for="(file, idx) in sourceFiles"
+            :key="idx"
+            :class="['tab', { active: selectedFileIndex === idx }]"
+            @click="selectedFileIndex = idx"
+          >
+            {{ file.file }}
+          </button>
+        </div>
         <pre v-html="highlightedCode" class="shiki-code" />
       </section>
-
 
       <!-- Preview Column -->
       <section class="pane preview-pane">
@@ -177,18 +206,55 @@ function githubUrl(file) {
   border-radius: 12px;
   background: var(--bg);
   min-width: 0;
+  min-height: 0;
 }
 
 .code-pane {
   background: var(--code-bg);
   border-color: var(--border);
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.file-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem;
+  background: var(--code-bg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: monospace;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: rgba(170, 59, 255, 0.08);
+}
+
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .code-pane .shiki-code {
   height: 100%;
+  width: 100%;
   overflow: auto;
   white-space: pre;
+  flex: 1;
 }
 
 .code-pane .shiki-code pre {
@@ -196,6 +262,7 @@ function githubUrl(file) {
   padding: 1.2rem !important;
   overflow: auto;
   height: 100%;
+  width: 100%;
   box-sizing: border-box;
   font-size: 0.8rem !important;
   line-height: 1.5 !important;

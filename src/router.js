@@ -28,6 +28,8 @@ import DemoWatchEffect from './components/day1/unit08-onMounted-watch/demo-watch
 import DemoWatchEffectSource from './components/day1/unit08-onMounted-watch/demo-watchEffect.vue?raw'
 import SpeakerCardParent from './components/day2/unit11-demo-props/demo-props-parent.vue'
 import SpeakerCardParentSource from './components/day2/unit11-demo-props/demo-props-parent.vue?raw'
+import SpeakerCard from './components/day2/unit11-demo-props/SpeakerCard.vue'
+import SpeakerCardSource from './components/day2/unit11-demo-props/SpeakerCard.vue?raw'
 
 const d1 = 'src/components/day1'
 const d2 = 'src/components/day2'
@@ -159,7 +161,10 @@ export const day2Units = [
         title: 'demo-props-parent.vue',
         file: `${d2}/unit11-demo-props/demo-props-parent.vue`,
         component: SpeakerCardParent,
-        source: SpeakerCardParentSource
+        source: [
+          { file: 'demo-props-parent.vue', code: SpeakerCardParentSource },
+          { file: 'SpeakerCard.vue', code: SpeakerCardSource }
+        ]
       }
     ]
   }
